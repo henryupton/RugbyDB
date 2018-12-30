@@ -69,9 +69,3 @@ for year in range(2011, 2018):
     ## Append to dictionary of DataFrames
     key = 'standings' + year_str
     df_dict[key] = standings
-
-## Check all is in order
-for table in df_dict.values():
-    print(table.head(20))
-
-print("Job done")
