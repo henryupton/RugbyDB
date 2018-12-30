@@ -1,4 +1,4 @@
-CREATE TABLE web_data.l_www_we_standings
+CREATE TABLE web_data.l_www_we_standings_hist
  (
    team VARCHAR(255)
    ,played INT
