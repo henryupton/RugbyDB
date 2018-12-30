@@ -2,29 +2,13 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-
-## Retrieve tables from HTML
-def find_and_split_rows(soup, html_object):
-    ## Return all rows from webpage
-    rows = soup.find_all(html_object)
-    for i in range(len(rows)):
-        ## Split string of row in to list of cells on commas
-        rows[i] = str(rows[i].find_all('td')) \
-            .split(',')
-
-        ## Strip away html tags
-        for j in range(len(rows[i])):
-            rows[i][j] = BeautifulSoup(rows[i][j], 'lxml').get_text()
-
-            ## Remove unwanted chararcters and whitespace
-            rows[i][j] = re.sub(r'\n|\xa0|\[|\]', '', rows[i][j]) \
-                .strip()
-    return rows
+import rugbydb.dbtools as dbt
+import rugbydb.scrapingtools as st
 
 ## Initialise output dictionary of annual snapshots
 df_dict = {}
 
-for year in range(2011, 2018):
+for year in range(2014, 2018):
     year_str = str(year)
     ## Open hypertext file object
     url = 'http://www.heartlandchampionship.co.nz/Fixtures/Standings/{year}'.format(year=year_str)
@@ -34,7 +18,7 @@ for year in range(2011, 2018):
     soup = BeautifulSoup(html, 'lxml')
 
     ## Run UDF to pull out relevant cells
-    rows = find_and_split_rows(soup, html_object='tr')
+    rows = st.find_and_split_rows(soup, html_object='tr')
 
     ## Leave out the nonsense
     default_teams = ['Mid Canterbury', 'South Canterbury', 'Wanganui', 'Thames Valley', 'Wairarapa Bush', 'Horowhenua-Kapiti', \
@@ -60,12 +44,13 @@ for year in range(2011, 2018):
     ## Use new column names
     standings.columns = headers
 
-    ## Remove incomplete seasons
-    #standings = standings[standings['Played']=='8']
-
     ## Add snapshot key column
-    standings['snapshotKey'] = year_str
+    standings['snapshot_key'] = year_str
 
     ## Append to dictionary of DataFrames
-    key = 'standings' + year_str
+    key = 'standings_' + year_str
     df_dict[key] = standings
+
+## Commit to db
+for df in df_dict.values():
+    dbt.pandas_to_postgres(df, table_name="web_data.l_www_we_standings_hist")
