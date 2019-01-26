@@ -65,7 +65,8 @@ for city in city_lst:
 
     ## Convert dict to pandas_df
     load_df = pd.DataFrame(data=dict, index=[0])
-
+    
+    ## Check if its first iteration else union rows
     if output_df is None:
         output_df = load_df
     else:
