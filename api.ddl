@@ -1,4 +1,4 @@
-CREATE TABLE api_data.weather (
+CREATE TABLE api_data.l_api_dl_weather (
   location VARCHAR
   ,country VARCHAR
   ,epoc_unix_time BIGINT
