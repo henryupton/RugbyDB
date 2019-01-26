@@ -73,4 +73,4 @@ for city in city_lst:
         output_df = pd.concat([output_df, load_df])
 
 ## Export to postgreSQL
-dbt.pandas_to_postgres(output_df, 'api_data.weather')
+dbt.pandas_to_postgres(output_df, 'api_data.l_api_dl_weather')
